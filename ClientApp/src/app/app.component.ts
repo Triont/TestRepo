@@ -11,9 +11,13 @@ export class AppComponent {
 
   markerSize = 25;
   public mData: ModelData[];
+  public mins: ModelData[];
+  public maxs: ModelData[];
   constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<ModelData[]>(baseUrl + 'weatherforecast').subscribe(result => {
-      this.mData = result;
+    http.get<ModelData[][]>(baseUrl + 'weatherforecast').subscribe(result => {
+      this.mData = result[0];
+      this.mins = result[1];
+      this.maxs = result[2];
       console.log(this.mData);
     //  this.setMarkerSize(this.markerSize, this.mData);
       this.setMarkerSize(this.markerSize, this.mData);
@@ -136,6 +140,10 @@ export class AppComponent {
 interface ModelData {
   value: number,
   dateTime:Date
+}
+
+interface ModelArray {
+  arr: ModelData[]
 }
 class Serializable {
   fillFromJSON(json: string) {

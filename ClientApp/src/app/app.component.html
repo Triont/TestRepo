@@ -13,3 +13,49 @@
   <button (click)="setMarkerSize(markerSize + 1)">Increase Marker Size</button>
 </div>
 <ag-charts-angular [options]="options"></ag-charts-angular>-->
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="mins">
+  <thead>
+   <tr>Minimums</tr>
+    <tr>
+      <th>Value</th>
+      <th>DateTime</th>
+
+    </tr>
+  </thead>
+  <tbody>
+
+
+    <!--  <tr ng-repeat="item in modelData">-->
+    <tr *ngFor="let index of mins">
+
+      <td>{{index.value}}</td>
+      <td>{{index.dateTime}}</td>
+
+    </tr>
+
+
+  </tbody>
+</table>
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="maxs">
+  <thead>
+    <tr>Maximums</tr>
+    <tr>
+      <th>Value</th>
+      <th>DateTime</th>
+
+    </tr>
+  </thead>
+  <tbody>
+
+
+    <!--  <tr ng-repeat="item in modelData">-->
+    <tr *ngFor="let index of maxs">
+
+      <td>{{index.value}}</td>
+      <td>{{index.dateTime}}</td>
+
+    </tr>
+
+
+  </tbody>
+</table>

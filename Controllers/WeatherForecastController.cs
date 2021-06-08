@@ -27,7 +27,7 @@ namespace Project2.Controllers
         }
 
         [HttpGet]
-        public ModelData[] Get()
+        public ModelData[] []Get()
         {
             var rng = new Random();
             //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -76,10 +76,10 @@ namespace Project2.Controllers
           var qq=  GetPs(getsTwo, getsThird);
 
             //Using Service
-            var _modelToList = CalculateService.GetSteps(modelDatas, 3);
-          var serviceCalcS=  CalculateService.GetSteps(_modelToList, 3);
-            var intersect = CalculateService.Intersect(_modelToList, serviceCalcS, WeatherForecastController.modelDatas);
-          var result_minmax=  CalculateService.MaxMinFound(intersect);
+            var _modelToListService = CalculateService.GetSteps(modelDatas, 3);
+          var serviceCalcService =  CalculateService.GetSteps(_modelToListService, 3);
+            var intersectService = CalculateService.Intersect(_modelToListService, serviceCalcService, WeatherForecastController.modelDatas);
+          var result_minmax=  CalculateService.MaxMinFound(intersectService);
             var service_mins = result_minmax[0];
             var service_maxs = result_minmax[1];
             //end of service using;
@@ -149,10 +149,30 @@ namespace Project2.Controllers
             //ModelData[][] arrView = new ModelData[2][];
             //arrView[0] = modelDatas.ToArray();
             //arrView[1] = modelsArray;
-           // return SecondResModel;
-        //    return arrView;
-           return modelDatasN;
-            //return modelDatas.ToArray();
+            // return SecondResModel;
+            //    return arrView;
+
+            ModelData[] ServiceIntersectModel = new ModelData[intersectService.Count];
+            for(int i=0;i<intersectService.Count;i++)
+            {
+                ServiceIntersectModel[i] = new ModelData();
+                ServiceIntersectModel[i].Value = intersectService[i].Item1;
+                ServiceIntersectModel[i].DateTime = intersectService[i].Item2;
+            }
+
+
+         var s_mins=   CalculateService.TupleToModelData(service_mins).ToArray();
+          var s_maxs=  CalculateService.TupleToModelData(service_maxs).ToArray();
+            ModelData[][]arr_toShow= new ModelData[3][];
+            arr_toShow[0] = ServiceIntersectModel;
+            arr_toShow[1] = s_mins;
+            arr_toShow[2] = s_maxs;
+        //     return ServiceIntersectModel;
+          return arr_toShow;
+            //return modelsArray;
+          
+            
+          //  return modelDatas.ToArray();
 
         }
         public static List<ValueAndDate> ChangeData(List<(double, double, string)> ps, ref Dictionary<DateTime, double> keyValuePairs)
@@ -298,13 +318,17 @@ namespace Project2.Controllers
 
         public static List<(double, double, string)> ProcessingVector( ref Dictionary<DateTime, double> ps)
         {
-            Random rng = new Random();
+           
            // ps = new List<(double, DateTime)>();
             List<(double, double, string)> result = new List<(double, double, string)>();
-            WeatherForecastController.modelDatas = new List<ModelData>();
-            for (int i = 0; i < 1000; i++)
-            {
-                WeatherForecastController.modelDatas.Add(new ModelData { DateTime = new DateTime(1950 + i, 2, 5, 1, 6, 9), Value = rng.NextDouble() + 1.5 });
+            if ((modelDatas == null) || modelDatas.Count == 0)
+            { Random rng = new Random();
+
+                WeatherForecastController.modelDatas = new List<ModelData>();
+                for (int i = 0; i < 1000; i++)
+                {
+                    WeatherForecastController.modelDatas.Add(new ModelData { DateTime = new DateTime(1950 + i, 2, 5, 1, 6, 9), Value = rng.NextDouble() + 1.5 });
+                }
             }
             int Skip = 0;
             //for (int i = 0; i < WeatherForecastController.modelDatas.Count; i++)

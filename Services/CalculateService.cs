@@ -14,19 +14,36 @@ namespace Project2.Services
             int skip = 0;
         
             List<(double, DateTime)> temp = new List<(double, DateTime)>();
-            while(args.Count-skip!=0)
+            //while(args.Count-skip!=0)
+            //{
+            //    var s = args.Skip(skip).Take(Count).ToList();
+            //    temp.Add(s[0]);
+            //    temp.Add(s[s.Count - 1]);
+            //    if(args.Count-skip<Count)
+            //    {
+            //        skip += (args.Count - skip);
+            //    }
+            //    else
+            //    {
+            //        skip += Count;
+            //    }
+            //}
+
+            for (int i = 0; i < args.Count;)
             {
-                var s = args.Skip(skip).Take(Count).ToList();
-                temp.Add(s[0]);
-                temp.Add(s[s.Count - 1]);
-                if(args.Count-skip<Count)
+
+                temp.Add((args[i].Item1, args[i].Item2));
+
+                if (args.Count - i > Count)
                 {
-                    skip += (args.Count - skip);
+                    i += Count;
                 }
                 else
                 {
-                    skip += Count;
+                    i += (args.Count - i);
                 }
+
+
             }
             return temp;
 
@@ -37,20 +54,47 @@ namespace Project2.Services
             int skip = 0;
           
             List<(double, DateTime)> temp = new List<(double, DateTime)>();
-            while (args.Count - skip != 0)
+            //while (args.Count - skip != 0)
+            //{
+            //    if (skip == 0)
+            //    {
+            //        var s = args.Skip(skip).Take(Count).ToList();
+            //        temp.Add((s.FirstOrDefault().Value, s.FirstOrDefault().DateTime));
+            //        temp.Add((s.LastOrDefault().Value, s.LastOrDefault().DateTime));
+            //        if (args.Count - skip < Count)
+            //        {
+            //            skip += (args.Count - skip);
+            //        }
+            //        else
+            //        {
+            //            skip += Count;
+            //        }
+            //    }
+            //    else
+            //    {
+
+                    
+            //    }
+
+            //}
+            for(int i=0;i<args.Count;)
             {
-                var s = args.Skip(skip).Take(Count).ToList();
-                temp.Add((s.FirstOrDefault().Value, s.FirstOrDefault().DateTime));
-                temp.Add((s.LastOrDefault().Value, s.LastOrDefault().DateTime));
-                if (args.Count - skip < Count)
+               
+                    temp.Add((args[i].Value, args[i].DateTime));
+                
+                if(args.Count-i>Count)
                 {
-                    skip += (args.Count - skip);
+                    i += Count;
                 }
                 else
                 {
-                    skip += Count;
+                    i += (args.Count - i);
                 }
+               
+
             }
+
+           
             return temp;
 
 
@@ -106,6 +150,19 @@ namespace Project2.Services
             result.Add(_mins);
             result.Add(_maxes);
             return result;
+        }
+
+        public List<ModelData> TupleToModelData(List<(double, DateTime)> ps)
+        {
+            List<ModelData> res = new List<ModelData>();
+            for(int i=0;i<ps.Count;i++)
+            {
+                ModelData modelData = new ModelData();
+                modelData.DateTime = ps[i].Item2;
+                modelData.Value = ps[i].Item1;
+                res.Add(modelData);
+            }
+            return res;
         }
 
 
