@@ -135,7 +135,7 @@ namespace Project2.Services
             if(temp.Year>0)
             {
                var distance= Math.Sqrt(Math.Pow((second.Item1 - first.Item1), 2) + Math.Pow((second.Item2.Year - first.Item2.Year), 2));
-
+                
                 var tempValue = first.Item1;
                 for(int i=1;i<=temp.Year;i++)
                 {
@@ -149,9 +149,11 @@ namespace Project2.Services
                 }
 
             }
+
             result.Insert(0, first);
             result.Add(second);
             var NRes = result.Distinct().ToList();
+
             return NRes;
             
         
