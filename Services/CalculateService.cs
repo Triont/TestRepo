@@ -135,11 +135,15 @@ namespace Project2.Services
             if(temp.Year>0)
             {
                var distance= Math.Sqrt(Math.Pow((second.Item1 - first.Item1), 2) + Math.Pow((second.Item2.Year - first.Item2.Year), 2));
+
+                var tempValue = first.Item1;
                 for(int i=1;i<=temp.Year;i++)
                 {
                     (double, DateTime) tempPoint = new();
                     double y_t = ((second.Item1 - first.Item1) / temp.Year) * Math.Abs(i - first.Item1);
-                    tempPoint.Item1 = y_t;
+                    tempValue += y_t;
+
+                    tempPoint.Item1 = tempValue;
                     tempPoint.Item2 = new DateTime(first.Item2.Year + i, first.Item2.Month, first.Item2.Day, first.Item2.Hour, first.Item2.Minute, first.Item2.Second);
                     result.Add(tempPoint);
                 }
