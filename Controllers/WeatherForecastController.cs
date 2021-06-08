@@ -73,11 +73,11 @@ namespace Project2.Controllers
             var lst_f = new List<(double, DateTime)>();
             for(int i=0;i<serviceCalcService.Count-1;i+=2)
             {
-                lst_s.AddRange(CalculateService.GetAllPoints(serviceCalcService[i], serviceCalcService[i + 1]));
+                lst_s.AddRange(CalculateService.GetPoints(serviceCalcService[i], serviceCalcService[i + 1]));
             }
             for (int i = 0; i < _modelToListService.Count - 1; i += 2)
             {
-                lst_f.AddRange(CalculateService.GetAllPoints(_modelToListService[i], _modelToListService[i + 1]));
+                lst_f.AddRange(CalculateService.GetPoints(_modelToListService[i], _modelToListService[i + 1]));
             }
             var newIntersect = CalculateService.Intersect(lst_f, lst_s, modelDatas);
             var newMinMax = CalculateService.MaxMinFound(newIntersect);

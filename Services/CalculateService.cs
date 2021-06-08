@@ -159,6 +159,62 @@ namespace Project2.Services
         
         }
 
+        public List<(double,DateTime)>GetPoints((double, DateTime)first, (double, DateTime) second)
+        {
+            var i = second.Item2.Year - first.Item2.Year;
+            List<(double, DateTime)> res = new List<(double, DateTime)>();
+            
+            if (i > 0)
+            {
+                var distance = Math.Sqrt(Math.Pow((second.Item1 - first.Item1), 2) + Math.Pow((second.Item2.Year - first.Item2.Year), 2)) /(i-1);
+                var fi = Math.Atan2(second.Item1 - first.Item1, i);
+              
+                res.Add(first);
+                for (int iq = 1; iq <i; iq++)
+                {
+                    DateTime tmp = new DateTime(first.Item2.Year + iq, first.Item2.Month, first.Item2.Day, first.Item2.Hour, first.Item2.Minute, first.Item2.Second);
+
+                    res.Add((first.Item1 + iq * distance * Math.Cos(fi), tmp));
+                }
+                res.Add(second);
+                return res;
+
+            }
+            else
+            {
+                res.Add(first);
+                res.Add(second);
+                return res;
+            }
+
+
+        }
+
+        public List<(double, DateTime)> GetPointsAllNew((double, DateTime) first, (double, DateTime) second)
+        {
+            var i = second.Item2.Year - first.Item2.Year;
+            List<(double, DateTime)> res = new List<(double, DateTime)>();
+
+              var distance = Math.Sqrt(Math.Pow((second.Item1 - first.Item1), 2) + Math.Pow((second.Item2.Year - first.Item2.Year), 2)) / (i - 1);
+                var fi = Math.Atan2(second.Item1 - first.Item1, i);
+
+             //   res.Add(first);
+             //only inside values
+                for (int iq = 1; iq < i; iq++)
+                {
+                    DateTime tmp = new DateTime(first.Item2.Year + iq, first.Item2.Month, first.Item2.Day, first.Item2.Hour, first.Item2.Minute, first.Item2.Second);
+
+                    res.Add((first.Item1 + iq * distance * Math.Cos(fi), tmp));
+                }
+              //  res.Add(second);
+                return res;
+
+            }
+         
+
+
+        }
+
     }
     
 }
