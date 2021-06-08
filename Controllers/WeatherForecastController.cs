@@ -30,22 +30,8 @@ namespace Project2.Controllers
         public ModelData[] []Get()
         {
             var rng = new Random();
-            //return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            //{
-            //    Date = DateTime.Now.AddDays(index),
-            //    TemperatureC = rng.Next(-20, 55),
-            //    Summary = Summaries[rng.Next(Summaries.Length)]
-            //})
-            //.ToArray();
-
-            //ModelData[] modelDatas = new ModelData[100];
-
-            //for(int i=0; i<modelDatas.Length;i++)
-            //{
-            //    modelDatas[i] = new ModelData { DateTime = new DateTime(1950+i, 2,5,1,6,9), Value = rng.NextDouble() + 1.5 };
-            //}
-            //   ProcessingVector();
-            List<(double, DateTime)> _sDataVal = new List<(double, DateTime)>();
+            
+            var _sDataVal = new List<(double, DateTime)>();
             List<(double, DateTime)> _tDataVal = new List<(double, DateTime)>();
             Dictionary<DateTime, double> Date_Value = new Dictionary<DateTime, double>();
             
@@ -58,7 +44,7 @@ namespace Project2.Controllers
 
 
             var tmp = JsonConvert.SerializeObject(new { modelDatas, s, result });
-            //ValueAndDate valueAndDate = new ValueAndDate();
+            
             List<ValueAndDate> firstData = new List<ValueAndDate>();
             List<ValueAndDate> secondData = new List<ValueAndDate>();
             List<ValueAndDate> thirdData = new List<ValueAndDate>();
@@ -82,6 +68,22 @@ namespace Project2.Controllers
           var result_minmax=  CalculateService.MaxMinFound(intersectService);
             var service_mins = result_minmax[0];
             var service_maxs = result_minmax[1];
+
+            var lst_s = new List<(double, DateTime)>();
+            var lst_f = new List<(double, DateTime)>();
+            for(int i=0;i<serviceCalcService.Count-1;i+=2)
+            {
+                lst_s.AddRange(CalculateService.GetAllPoints(serviceCalcService[i], serviceCalcService[i + 1]));
+            }
+            for (int i = 0; i < _modelToListService.Count - 1; i += 2)
+            {
+                lst_f.AddRange(CalculateService.GetAllPoints(_modelToListService[i], _modelToListService[i + 1]));
+            }
+            var newIntersect = CalculateService.Intersect(lst_f, lst_s, modelDatas);
+            var newMinMax = CalculateService.MaxMinFound(newIntersect);
+            var NewMins = newMinMax[0];
+            var NewMaxs = newMinMax[1];
+
             //end of service using;
 
 
@@ -163,10 +165,17 @@ namespace Project2.Controllers
 
          var s_mins=   CalculateService.TupleToModelData(service_mins).ToArray();
           var s_maxs=  CalculateService.TupleToModelData(service_maxs).ToArray();
-            ModelData[][]arr_toShow= new ModelData[3][];
+            ModelData[][]arr_toShow= new ModelData[10][];
             arr_toShow[0] = ServiceIntersectModel;
             arr_toShow[1] = s_mins;
             arr_toShow[2] = s_maxs;
+            arr_toShow[3] = modelDatas.ToArray();
+            arr_toShow[4] = CalculateService.TupleToModelData(_modelToListService).ToArray();
+            arr_toShow[5] = CalculateService.TupleToModelData(serviceCalcService).ToArray();
+            arr_toShow[6] = CalculateService.TupleToModelData(newIntersect).ToArray();
+            arr_toShow[7] = CalculateService.TupleToModelData(NewMins).ToArray();
+            arr_toShow[8] = CalculateService.TupleToModelData(NewMaxs).ToArray();
+         
         //     return ServiceIntersectModel;
           return arr_toShow;
             //return modelsArray;
@@ -331,8 +340,7 @@ namespace Project2.Controllers
                 }
             }
             int Skip = 0;
-            //for (int i = 0; i < WeatherForecastController.modelDatas.Count; i++)
-            //{
+           
 
             while ((modelDatas.Count - Skip) != 0)
             //if (modelDatas.Count - Skip >= 1)
@@ -392,25 +400,7 @@ namespace Project2.Controllers
                     Skip += 3;
                 }
             }
-            //else
-            //{
-            //    Skip--;
-
-            //    //var temp = WeatherForecastController.modelDatas.Skip().Take(3).ToList();
-            //    //if (temp[0].Value > temp.Last().Value)
-            //    //{
-            //    //    result.Add((temp[0].Value, temp.Last().Value, "decrease"));
-
-            //    //}
-            //    //else if (temp[0].Value < temp.Last().Value)
-            //    //{
-            //    //    result.Add((temp[0].Value, temp.Last().Value, "increase"));
-            //    //}
-            //    //else
-            //    //{
-            //    //    result.Add((temp[0].Value, temp.Last().Value, "equal"));
-            //    //}
-            //}
+          
 
             return result;
         }
@@ -429,21 +419,18 @@ namespace Project2.Controllers
 
                 for (int i = 0; i < new_temp.Count; i++)
                 {
-                    // var new_temp = WeatherForecastController.modelDatas.Skip(skip).Take(9).ToList();
+                    
                     if (new_temp?[i].Item1 > new_temp?[i].Item2)
                     {
                         result.Add((new_temp[i].Item1, new_temp[i].Item2, "decrease"));
 
-                       // ps.Add((new_temp[i].Item1 ));
-
-                        //ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
+                     
 
                     }
                     else if (new_temp?[i].Item1 < new_temp?[i].Item2)
                     {
                         result.Add((new_temp[i].Item1, new_temp[i].Item2, "increase"));
-                      //  ps.Add((new_temp[0].Value, new_temp[0].DateTime));
-                        //ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
+                  
                     }
                     else
                     {
@@ -454,8 +441,7 @@ namespace Project2.Controllers
                             result.Add((new_temp[i].Item1, new_temp[i].Item2, "equal"));
 
                         }
-                            //     ps.Add((new_temp[0].Value, new_temp[0].DateTime));
-                     //   ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
+                          
                     }
                 }
                 if (modelDatas.Count - skip < 9)
@@ -506,11 +492,7 @@ namespace Project2.Controllers
             List<ValueAndDate> valueAndDates = new List<ValueAndDate>();
             for (int i = 0; i < modelDatas.Count; i++)
             {
-                //ValueAndDate temp_ = new ValueAndDate()
-                //{
-                //    Value = modelDatas[i].Value,
-                //    DateTime = modelDatas[i].DateTime
-                //};
+              
                 ValueTuple<DateTime, double> __temp = new(DateTime.Now, 0);
                 __temp.Item1 = modelDatas[i].DateTime;
                 __temp.Item2 = modelDatas[i].Value;
@@ -524,18 +506,7 @@ namespace Project2.Controllers
        
         public static List<ValueTuple<double, string,DateTime>> DiagrmInter(List<ValueTuple<double,string, DateTime>>  f, List<ValueTuple<double,string, DateTime>> s)
         {
-            //  ValueTuple<double, double, string
-
-         //   List<ValueTuple<double,string, DateTime>> _tmp_f = new List<(double, string,DateTime)>();
-           // List<ValueTuple<double, DateTime>> _tmp_s = new List<(double, DateTime)>();
-            //for(int i=0;i<f.Count;i++)
-            //{
-            //    _tmp_f.Add((f[i].Item1, f[i].Item3));
-            //}
-            //for(int i=0;i<s.Count;i++)
-            //{
-            //    _tmp_s.Add((s[i].Item1, s[i].Item3));
-            //}
+           
           var s_th=  f.Intersect(s).ToList();
             List<ValueTuple<double,string, DateTime>> temp = new List<ValueTuple<double,string, DateTime>>();
             for(int i=0; i<modelDatas.Count;i++)
@@ -557,18 +528,7 @@ namespace Project2.Controllers
 
         public static List<ValueTuple<DateTime, double>> DiagrmInter(List<ValueTuple<DateTime, double>> f, List<ValueTuple<DateTime, double>> s)
         {
-            //  ValueTuple<double, double, string
 
-            //   List<ValueTuple<double,string, DateTime>> _tmp_f = new List<(double, string,DateTime)>();
-            // List<ValueTuple<double, DateTime>> _tmp_s = new List<(double, DateTime)>();
-            //for(int i=0;i<f.Count;i++)
-            //{
-            //    _tmp_f.Add((f[i].Item1, f[i].Item3));
-            //}
-            //for(int i=0;i<s.Count;i++)
-            //{
-            //    _tmp_s.Add((s[i].Item1, s[i].Item3));
-            //}
             var s_th = f.Intersect(s).ToList();
             List<ValueTuple<DateTime, double>> temp = new List<ValueTuple<DateTime,  double>>();
             for (int i = 0; i < modelDatas.Count; i++)
@@ -611,8 +571,7 @@ namespace Project2.Controllers
                 if (temp[0].Item1 > temp[temp.Count-1].Item1)
                 {
                     result.Add((temp[0].Item1, temp.Last().Item1, "decrease"));
-                   // ps.Add((temp[0].Value, temp[0].DateTime));
-                    //ps.Add((temp[temp.Count - 1].Value, temp[temp.Count - 1].DateTime));
+                  
 
                 }
                 else if (temp?[0].Item1 < temp?[temp.Count-1].Item1)
@@ -630,8 +589,7 @@ namespace Project2.Controllers
                         result.Add((temp[0].Item1, temp.Last().Item1, "equal"));
 
                     }
-                        //ps.Add((temp[0].Value, temp[0].DateTime));
-                    //ps.Add((temp[temp.Count - 1].Value, temp[temp.Count - 1].DateTime));
+                      
                 }
 
                 if (modelDatas.Count - skip < 9)
@@ -653,10 +611,7 @@ namespace Project2.Controllers
                     {
                        // maxes.Add((result[i].Item1, dateTime.Where(t=>t.Value==result[i].Item1).Select(p=>p.Key).FirstOrDefault()));
                     }
-                    //else if(result[i])
-                    //{
-
-                    //}
+                  
                 }
             }
 
@@ -806,27 +761,12 @@ namespace Project2.Controllers
                 {
                     result.Add((temp[0].Value, temp.Last().Value, "increase", temp[temp.Count-1].DateTime));
 
-                    //if (!ps.ContainsKey(temp[0].DateTime))
-                    //{
-                    //    ps.Add(temp[0].DateTime, temp[0].Value);
-                    //}
-                    //if (!ps.ContainsKey(temp[temp.Count - 1].DateTime))
-                    //{
-                    //    ps.Add(temp[temp.Count - 1].DateTime, temp[temp.Count - 1].Value);
-                    //}
+                  
                 }
                 else
                 {
                     result.Add((temp[0].Value, temp.Last().Value, "equal", temp[temp.Count-1].DateTime));
-                    //if (!ps.ContainsKey(temp[0].DateTime))
-                    //{
-                    //    ps.Add(temp[0].DateTime, temp[0].Value);
-                    //}
-                    //if (!ps.ContainsKey(temp[temp.Count - 1].DateTime))
-                    //{
-
-                    //    ps.Add(temp[temp.Count - 1].DateTime, temp[temp.Count - 1].Value);
-                    //}
+                
                 }
                 if (modelDatas.Count - Skip < 3)
                 {
@@ -836,9 +776,9 @@ namespace Project2.Controllers
                 {
 
 
-                    Skip += 3;//2 if uses duplicates and next step starts with it;
+                    Skip += 3;
                 }
-             //   return result;
+          
             }
             return result;
         }
@@ -848,7 +788,7 @@ namespace Project2.Controllers
             var skip = 0;
             List<(double, double, string, DateTime)> result = new List<(double start, double end, string vector, DateTime _dateTime)>();
 
-         //   ps = new List<(double, DateTime)>();
+        
 
             while ((args.Count - skip) != 0)
             {
@@ -862,28 +802,14 @@ namespace Project2.Controllers
                     if (n_temp?[0].Item1 > n_temp?[n_temp.Count - 1].Item2)
                     {
                         result.Add((n_temp[0].Item1, n_temp[n_temp.Count - 1].Item2, "decrease", n_temp[n_temp.Count - 1].Item4));
-                        //if (!ps.ContainsKey(temp[0].DateTime))
-                        //{
-                        //    ps.Add(temp[0].DateTime, temp[0].Value);
-                        //}
-
-                        //if (!ps.ContainsKey(temp[temp.Count - 1].DateTime))
-                        //{
-                        //    ps.Add(temp[temp.Count - 1].DateTime, temp[temp.Count - 1].Value);
-                        //}
+                      
                     }
                     else if (n_temp?[0].Item1 < n_temp?[n_temp.Count - 1].Item2)
                     {
                         // result.Add((temp[0].Value, temp.Last().Value, "increase", temp[temp.Count - 1].DateTime));
                         result.Add((n_temp[0].Item1, n_temp[n_temp.Count - 1].Item2, "increase", n_temp[n_temp.Count - 1].Item4));
-                        //if (!ps.ContainsKey(temp[0].DateTime))
-                        //{
-                        //    ps.Add(temp[0].DateTime, temp[0].Value);
-                        //}
-                        //if (!ps.ContainsKey(temp[temp.Count - 1].DateTime))
-                        //{
-                        //    ps.Add(temp[temp.Count - 1].DateTime, temp[temp.Count - 1].Value);
-                        //}
+                        
+                        
                     }
                     else
                     {
@@ -891,17 +817,8 @@ namespace Project2.Controllers
                         {
                             result.Add((n_temp[0].Item1, n_temp[n_temp.Count - 1].Item2, "equal", n_temp[n_temp.Count - 1].Item4));
                         }
-                        //  result.Add((temp[0].Value, temp.Last().Value, "equal", temp[temp.Count - 1].DateTime));
+                       
 
-                        //if (!ps.ContainsKey(temp[0].DateTime))
-                        //{
-                        //    ps.Add(temp[0].DateTime, temp[0].Value);
-                        //}
-                        //if (!ps.ContainsKey(temp[temp.Count - 1].DateTime))
-                        //{
-
-                        //    ps.Add(temp[temp.Count - 1].DateTime, temp[temp.Count - 1].Value);
-                        //}
                     }
                 }
                 if (args.Count - skip < 3)
@@ -916,48 +833,6 @@ namespace Project2.Controllers
                 }
 
 
-
-                //var new_temp = args.Skip(skip).Take(9).ToList();
-
-                //for (int i = 0; i < new_temp.Count; i++)
-                //{
-                //    // var new_temp = WeatherForecastController.modelDatas.Skip(skip).Take(9).ToList();
-                //    if (new_temp?[i].Item1 > new_temp?[i].Item2)
-                //    {
-                //        result.Add((new_temp[i].Item1, new_temp[i].Item2, "decrease", new_temp[i].Item4));
-
-                //        // ps.Add((new_temp[i].Item1 ));
-
-                //        //ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
-
-                //    }
-                //    else if (new_temp?[i].Item1 < new_temp?[i].Item2)
-                //    {
-                //        result.Add((new_temp[i].Item1, new_temp[i].Item2, "increase"));
-                //        //  ps.Add((new_temp[0].Value, new_temp[0].DateTime));
-                //        //ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
-                //    }
-                //    else
-                //    {
-                //        if (new_temp != null)
-                //        {
-
-
-                //            result.Add((new_temp[i].Item1, new_temp[i].Item2, "equal"));
-
-                //        }
-                //        //     ps.Add((new_temp[0].Value, new_temp[0].DateTime));
-                //        //   ps.Add((new_temp[new_temp.Count - 1].Value, new_temp[new_temp.Count - 1].DateTime));
-                //    }
-                //}
-                //if (modelDatas.Count - skip < 9)
-                //{
-                //    skip += (modelDatas.Count - skip);
-                //}
-                //else
-                //{
-                //    skip += 9;
-                //}
 
 
             }

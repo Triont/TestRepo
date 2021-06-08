@@ -14,21 +14,7 @@ namespace Project2.Services
             int skip = 0;
         
             List<(double, DateTime)> temp = new List<(double, DateTime)>();
-            //while(args.Count-skip!=0)
-            //{
-            //    var s = args.Skip(skip).Take(Count).ToList();
-            //    temp.Add(s[0]);
-            //    temp.Add(s[s.Count - 1]);
-            //    if(args.Count-skip<Count)
-            //    {
-            //        skip += (args.Count - skip);
-            //    }
-            //    else
-            //    {
-            //        skip += Count;
-            //    }
-            //}
-
+         
             for (int i = 0; i < args.Count;)
             {
 
@@ -54,30 +40,7 @@ namespace Project2.Services
             int skip = 0;
           
             List<(double, DateTime)> temp = new List<(double, DateTime)>();
-            //while (args.Count - skip != 0)
-            //{
-            //    if (skip == 0)
-            //    {
-            //        var s = args.Skip(skip).Take(Count).ToList();
-            //        temp.Add((s.FirstOrDefault().Value, s.FirstOrDefault().DateTime));
-            //        temp.Add((s.LastOrDefault().Value, s.LastOrDefault().DateTime));
-            //        if (args.Count - skip < Count)
-            //        {
-            //            skip += (args.Count - skip);
-            //        }
-            //        else
-            //        {
-            //            skip += Count;
-            //        }
-            //    }
-            //    else
-            //    {
-
-                    
-            //    }
-
-            //}
-            for(int i=0;i<args.Count;)
+           for( int i=0;i<args.Count;)
             {
                
                     temp.Add((args[i].Value, args[i].DateTime));
@@ -165,6 +128,31 @@ namespace Project2.Services
             return res;
         }
 
+        public List<(double, DateTime)> GetAllPoints((double, DateTime)first, (double, DateTime) second)
+        {
+            List<(double, DateTime)> result = new List<(double, DateTime)>();
+            var temp =new DateTime( (second.Item2.Year - first.Item2.Year), first.Item2.Month, first.Item2.Day);
+            if(temp.Year>0)
+            {
+               var distance= Math.Sqrt(Math.Pow((second.Item1 - first.Item1), 2) + Math.Pow((second.Item2.Year - first.Item2.Year), 2));
+                for(int i=1;i<=temp.Year;i++)
+                {
+                    (double, DateTime) tempPoint = new();
+                    double y_t = ((second.Item1 - first.Item1) / temp.Year) * Math.Abs(i - first.Item1);
+                    tempPoint.Item1 = y_t;
+                    tempPoint.Item2 = new DateTime(first.Item2.Year + i, first.Item2.Month, first.Item2.Day, first.Item2.Hour, first.Item2.Minute, first.Item2.Second);
+                    result.Add(tempPoint);
+                }
+
+            }
+            result.Insert(0, first);
+            result.Add(second);
+            var NRes = result.Distinct().ToList();
+            return NRes;
+            
+        
+        }
 
     }
+    
 }
