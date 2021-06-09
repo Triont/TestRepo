@@ -75,11 +75,15 @@ namespace Project2.Controllers
             {
                 lst_s.AddRange(CalculateService.GetPoints(serviceCalcService[i], serviceCalcService[i + 1]));
             }
+        //    lst_s.Insert(0, CalculateService.GetPointsAllNew(serviceCalcService[0], serviceCalcService[serviceCalcService.Count]))
             for (int i = 0; i < _modelToListService.Count - 1; i += 2)
             {
                 lst_f.AddRange(CalculateService.GetPoints(_modelToListService[i], _modelToListService[i + 1]));
             }
-            var newIntersect = CalculateService.Intersect(lst_f, lst_s, modelDatas);
+            var n_f = lst_f.Distinct().ToList();
+            var n_s = lst_s.Distinct().ToList();
+         //   var newIntersect = CalculateService.Intersect(lst_f, lst_s, modelDatas);
+            var newIntersect = CalculateService.Intersect(n_f, n_s, modelDatas);
             var newMinMax = CalculateService.MaxMinFound(newIntersect);
             var NewMins = newMinMax[0];
             var NewMaxs = newMinMax[1];
